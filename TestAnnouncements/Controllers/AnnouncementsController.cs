@@ -12,6 +12,7 @@ using UseCases.Announcements.Commands.Create;
 using UseCases.Announcements.Commands.Delete;
 using UseCases.Announcements.Commands.Update;
 using UseCases.Announcements.Queries.Get;
+using UseCases.Announcements.Queries.GetDetail;
 using UseCases.Announcements.Queries.GetList;
 using UseCases.Models;
 
@@ -33,7 +34,15 @@ namespace TestAnnouncements.Controllers
             var announcementsViewModels = announcementsDtos.Select(s => s.AsViewModel());
             return View(announcementsViewModels);
         }
+        [HttpGet]
 
+        //Get: /Announcements/GetDetail/{id}    
+        public async Task<IActionResult> GetDetail(int id)
+        {
+            var detailAnnouncement = await _sender.Send(new GetAnnouncemetDetailQuery() 
+            { id = id });
+            return View(detailAnnouncement.AsViewModel());
+        }
         //Get: /Announcements/Create
         [HttpGet]
         public IActionResult Create()
@@ -98,9 +107,9 @@ namespace TestAnnouncements.Controllers
             var announcement = await _sender.Send(new GetAnnouncementQuery() { Id = id });
             return View(announcement.AsViewModel());
         }
-        //Delete: /Announcements/Delete/{id}
-        [HttpDelete]
-        public async Task<IActionResult> Delete(int id,FormCollection collection)
+        //Post: /Announcements/Delete/{id}
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id,IFormCollection collection)
         {
             await _sender.Send(new DeleteAnnouncementCommand() { Id = id});
             return RedirectToAction("GetList");

@@ -1,0 +1,60 @@
+﻿@model AnnouncementDetailViewModel
+
+@{
+    ViewData["Title"] = "GetDetail";
+}
+
+<h1>Details</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">
+            <label>Id:</label>
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Id)
+        </dd>
+        <dt class="col-sm-3">
+            <label>Title:</label>
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt class="col-sm-3">
+            <label>Description:</label>
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class="col-sm-3">
+            <label>Date Added:</label>
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.DateAdded)
+        </dd>
+        <dt class="col-sm-3">
+            <label>Same Announcements:</label>
+        </dt>
+        <dd class="col-sm-9">
+
+            @for (int i = 0; i < Model.SameAnnouncements.Count; i++)
+            {
+                if(i< Model.SameAnnouncements.Count-1) { 
+                <label>@Model.SameAnnouncements[i], </label>
+                }
+                else
+                {
+                <label>@Model.SameAnnouncements[i]</label>
+                }
+            }
+
+        </dd>
+
+
+    </dl>
+</div>
+<div>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id}) |
+    <a asp-action="GetList">Back to List</a>
+</div>
