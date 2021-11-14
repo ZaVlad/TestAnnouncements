@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using TestAnnouncements.Models.RequestModels;
 using TestAnnouncements.Models.ViewModels;
 using UseCases.Announcements.Commands.Create;
+using UseCases.Announcements.Commands.Update;
+using UseCases.Announcements.Queries.Get;
 using UseCases.Announcements.Queries.GetList;
 using UseCases.Models;
 
@@ -18,7 +20,7 @@ namespace TestAnnouncements.Controllers
         private readonly ISender _sender;
         public AnnouncementsController(ISender sender)
         {
-            _sender = sender ??throw new ArgumentNullException(nameof(sender));
+            _sender = sender ?? throw new ArgumentNullException(nameof(sender));
         }
 
         //Get: /Announcements/GetList
@@ -42,18 +44,54 @@ namespace TestAnnouncements.Controllers
         public async Task<IActionResult> Create(CreateAnnouncementRequestModel requestModel)
         {
             ValidateAnnouncementRequest(requestModel);
-            if(ModelState.IsValid == false)
+            if (ModelState.IsValid == false)
             {
                 return View(requestModel);
             }
-            await _sender.Send(new CreateAnnouncementCommand() {AnnouncementDto = new CreateAnnouncementDto() 
-            {Description = requestModel.Description,Title = requestModel.Title } });
+            await _sender.Send(new CreateAnnouncementCommand()
+            {
+                AnnouncementDto = new CreateAnnouncementDto()
+                { Description = requestModel.Description, Title = requestModel.Title }
+            });
+            return RedirectToAction("GetList");
+        }
+
+        // Get: /Announcements/Edit
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var announcement = await _sender.Send(new GetAnnouncementQuery() { Id= id });
+            return View(new EditAnnouncementRequestModel() 
+            {Description = announcement.Description,
+                Title = announcement.Title });
+        }
+
+        //Put: /Announcements/Edit/{id}
+        public async Task<IActionResult> Edit(int id, EditAnnouncementRequestModel request)
+        {
+
+            ValidateAnnouncementRequest(request);
+
+            if (ModelState.IsValid == false)
+            {
+                return View(request);
+            }
+
+            await _sender.Send(new UpdateAnnouncementCommand()
+            {
+                UpdatedAnnouncement = new UpdateAnnouncementDto()
+                {
+                    Id = id,
+                    Description = request.Description,
+                    Title = request.Title
+                }
+            });
             return RedirectToAction("GetList");
         }
 
         private void ValidateAnnouncementRequest(IAnnouncementRequest request)
         {
-            if(request.Description is null)
+            if (request.Description is null)
             {
                 ModelState.AddModelError($"{nameof(request.Description)}", "You must fill description field");
             }
