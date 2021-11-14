@@ -6,12 +6,9 @@ using System.Threading.Tasks;
 
 namespace UseCases.Models
 {
-   public  class AnnouncementDto
+   public class CreateAnnouncementDto
     {
-        public int Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public DateTime DateAdded { get; set; }
     }
-
 }

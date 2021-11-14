@@ -18,8 +18,8 @@ namespace UseCases.Announcements.Queries.GetList
         private readonly IMapper _mapper;
         public GetAnnouncementsListHandler(IDbContext dbContext, IMapper mapper)
         {
-            _dbContext = dbContext;
-            _mapper = mapper;
+            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext)); 
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper)); 
         }
         public async Task<List<AnnouncementDto>> Handle(GetAnnouncementsListQuery request, CancellationToken cancellationToken)
         {
