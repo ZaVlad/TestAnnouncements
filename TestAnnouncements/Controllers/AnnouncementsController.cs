@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 using TestAnnouncements.Models.RequestModels;
 using TestAnnouncements.Models.ViewModels;
 using UseCases.Announcements.Commands.Create;
+using UseCases.Announcements.Commands.Delete;
 using UseCases.Announcements.Commands.Update;
 using UseCases.Announcements.Queries.Get;
 using UseCases.Announcements.Queries.GetList;
@@ -67,6 +69,7 @@ namespace TestAnnouncements.Controllers
         }
 
         //Put: /Announcements/Edit/{id}
+        [HttpPut]
         public async Task<IActionResult> Edit(int id, EditAnnouncementRequestModel request)
         {
 
@@ -86,6 +89,20 @@ namespace TestAnnouncements.Controllers
                     Title = request.Title
                 }
             });
+            return RedirectToAction("GetList");
+        }
+        //Get: /Announcements/Delete/{id}
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var announcement = await _sender.Send(new GetAnnouncementQuery() { Id = id });
+            return View(announcement.AsViewModel());
+        }
+        //Delete: /Announcements/Delete/{id}
+        [HttpDelete]
+        public async Task<IActionResult> Delete(int id,FormCollection collection)
+        {
+            await _sender.Send(new DeleteAnnouncementCommand() { Id = id});
             return RedirectToAction("GetList");
         }
 
